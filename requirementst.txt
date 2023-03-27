@@ -1,0 +1,8 @@
+av==9.2.0
+ibm_cloud_sdk_core==3.15.3
+ibm_watson==6.0.0
+numpy==1.22.4
+opencv-python-headless==4.5.5.64
+streamlit
+streamlit_autorefresh
+streamlit_webrtc
