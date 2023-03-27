@@ -70,7 +70,7 @@ ref_person = cv.imread('ReferenceImages/image14.png')
 ref_mobile = cv.imread('ReferenceImages/image4.png')
 
 mobile_data = object_detector(ref_mobile)
-mobile_width_in_rf = mobile_data[1][1]
+mobile_width_in_rf = mobile_data[0][1]
 
 person_data = object_detector(ref_person)
 person_width_in_rf = person_data[0][1]
