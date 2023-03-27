@@ -129,7 +129,7 @@ ref_chair = cv.imread('ReferenceImages/image22.png')
 ref_laptop = cv.imread('ReferenceImages/image2.png')
 
 mobile_data = object_detector(ref_mobile)
-mobile_width_in_rf = mobile_data[1][1]
+mobile_width_in_rf = mobile_data[1][0]
 
 person_data = object_detector(ref_person)
 person_width_in_rf = person_data[0][1]
