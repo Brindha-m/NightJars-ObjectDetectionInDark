@@ -17,3 +17,5 @@ stqdm
 deep-sort-realtime
 streamlit_autorefresh
 streamlit_webrtc
+ipython
+tensorboard>=2.4.1
