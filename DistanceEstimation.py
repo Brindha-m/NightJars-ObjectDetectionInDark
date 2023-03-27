@@ -131,7 +131,7 @@ ref_laptop = cv.imread('ReferenceImages/image2.png')
 
 
 person_data = object_detector(ref_person)
-person_width_in_rf = person_data[0][1]
+person_width_in_rf = person_data[1][0]
 
 chair_data = object_detector(ref_person)
 chair_width_in_rf = chair_data[0][1]
