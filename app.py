@@ -291,7 +291,7 @@ if source_index == 2:
     cap = None
 
     if not model_type == 'YOLO Model':
-        path_model_file = f'yolov8xcdark.pt'
+        path_model_file = f'yolov8.pt'
         if model_type == 'YOLOv8':
             # GPU
             gpu_option = st.sidebar.radio(
