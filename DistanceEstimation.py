@@ -78,15 +78,15 @@ def object_detector(image):
         # 2: object width in pixels, 
         # 3: position where have to draw text(distance)
 
-        # print("objects identified status")
-        # print("person identified : ",classid == 0)
-        # print("mobile identified : ",classid == 67)
-        # print("chair identified : ",classid == 56)
-        # print("bicycle identified : ",classid == 1)
-        # print("car identified : ",classid == 2)
-        # print("motorbike identified : ",classid == 3)
-        # print("Laptop identified : ",classid == 72)
-        # print("Keyboard identified : ",classid == 75)
+        print("objects identified status")
+        print("person identified : ",classid == 0)
+        print("mobile identified : ",classid == 67)
+        print("chair identified : ",classid == 56)
+        print("bicycle identified : ",classid == 1)
+        print("car identified : ",classid == 2)
+        print("motorbike identified : ",classid == 3)
+        print("Laptop identified : ",classid == 72)
+        print("Keyboard identified : ",classid == 75)
 
 
         # getting the data 
@@ -129,7 +129,7 @@ ref_chair = cv.imread('ReferenceImages/image22.png')
 ref_laptop = cv.imread('ReferenceImages/image2.png')
 
 mobile_data = object_detector(ref_mobile)
-mobile_width_in_rf = mobile_data[1][0]
+mobile_width_in_rf = mobile_data[1][1]
 
 person_data = object_detector(ref_person)
 person_width_in_rf = person_data[0][1]
@@ -137,7 +137,8 @@ person_width_in_rf = person_data[0][1]
 chair_data = object_detector(ref_person)
 chair_width_in_rf = chair_data[0][1]
 
-
+lap_data = object_detector(ref_laptop)
+lap_width_in_rf = person_data[0][1]
 
 # print(f"Person width in pixels : {person_width_in_rf} mobile width in pixel: {mobile_width_in_rf}")
 
@@ -145,7 +146,7 @@ chair_width_in_rf = chair_data[0][1]
 focal_person = focal_length_finder(KNOWN_DISTANCE, PERSON_WIDTH, person_width_in_rf)
 focal_mobile = focal_length_finder(KNOWN_DISTANCE, MOBILE_WIDTH, mobile_width_in_rf)
 focal_chair = focal_length_finder(KNOWN_DISTANCE, CHAIR_WIDTH, chair_width_in_rf)
-
+focal_latop = focal_length_finder(KNOWN_DISTANCE, LAPTOP_WIDTH, lap_width_in_rf)
 
 #d[]
 
@@ -163,7 +164,9 @@ def get_frame_output(frame, frame_cnt):
             distance = distance_finder (focal_chair, CHAIR_WIDTH, d[1])
             x, y = d[2]
         
-        
+        elif d[0] == 'laptop':
+            distance = distance_finder (focal_latop, LAPTOP_WIDTH, d[1])
+            x, y = d[2]
         
         text1,text2=d[3],d[4]
 
