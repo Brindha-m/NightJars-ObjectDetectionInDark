@@ -1,22 +1,20 @@
 import os
+os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 import cv2
 import json
 import subprocess
 import numpy as np
-import pandas as pd
 from _collections import deque
 from deep_sort_realtime.deepsort_tracker import DeepSort
 from stqdm import stqdm
 from collections import Counter
 import time
-from utils.hubconf import custom
-import tempfile
-import time
 from ultralytics import YOLO
 from ultralytics.yolo.engine.results import Results
 import json
-from model_utils import get_yolo, get_system_stat
+from model_utils import get_system_stat
 from streamlit_webrtc import RTCConfiguration, VideoTransformerBase, webrtc_streamer
+from DistanceEstimation import *
 from streamlit_autorefresh import st_autorefresh
 import streamlit as st
 
@@ -25,6 +23,10 @@ COLORS = [(56, 56, 255), (151, 157, 255), (31, 112, 255), (29, 178, 255), (49, 2
           (134, 219, 61), (52, 147, 26), (187, 212, 0), (168, 153, 44), (255, 194, 0), (147, 69, 52), (255, 115, 100),
           (236, 24, 0), (255, 56, 132), (133, 0, 82), (255, 56, 203), (200, 149, 255), (199, 55, 255)]
 
+
+st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="/content/drive/MyDrive/Yolov8_Nightjars/YOLOV8/favicon-yolo.ico")
+st.sidebar.image("nsidelogo.png")
+st.image("nsidelogoo.png")
 
 def result_to_json(result: Results, tracker=None):
     """
@@ -111,16 +113,14 @@ def view_result_default(result: Results, result_list_json, centers=None):
     image = result.orig_img
     for result in result_list_json:
         class_color = COLORS[result['class_id'] % len(COLORS)]
-        fontFace = "/content/drive/MyDrive/Yolov8_Nightjars/models/ahronbd.ttf"
-        fontScale = 1
         if 'mask' in result:
             image_mask = np.stack([np.array(result['mask']) * class_color[0], np.array(result['mask']) * class_color[1], np.array(result['mask']) * class_color[2]], axis=-1).astype(np.uint8)
             image = cv2.addWeighted(image, 1, image_mask, ALPHA, 0)
         text = f"{result['class']} {result['object_id']}: {result['confidence']:.2f}" if 'object_id' in result else f"{result['class']}: {result['confidence']:.2f}"
-        cv2.rectangle(image, (result['bbox']['x_min'], result['bbox']['y_min']), (result['bbox']['x_max'], result['bbox']['y_max']), class_color, 1)
-        (text_width, text_height), baseline = cv2.getTextSize(text, cv2.FONT_HERSHEY_DUPLEX, 0.85, 1)
+        cv2.rectangle(image, (result['bbox']['x_min'], result['bbox']['y_min']), (result['bbox']['x_max'], result['bbox']['y_max']), class_color, 2)
+        (text_width, text_height), baseline = cv2.getTextSize(text, cv2.FONT_HERSHEY_SIMPLEX, 0.75, 2)
         cv2.rectangle(image, (result['bbox']['x_min'], result['bbox']['y_min'] - text_height - baseline), (result['bbox']['x_min'] + text_width, result['bbox']['y_min']), class_color, -1)
-        cv2.putText(image, text , (result['bbox']['x_min'], result['bbox']['y_min'] - baseline), cv2.FONT_HERSHEY_DUPLEX, 0.85, (255, 255, 255), 1)
+        cv2.putText(image, text, (result['bbox']['x_min'], result['bbox']['y_min'] - baseline), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (255, 255, 255), 2)
         if 'object_id' in result and centers is not None:
             centers[result['object_id']].append((int((result['bbox']['x_min'] + result['bbox']['x_max']) / 2), int((result['bbox']['y_min'] + result['bbox']['y_max']) / 2)))
             for j in range(1, len(centers[result['object_id']])):
@@ -191,21 +191,6 @@ def video_processing(video_file, model, image_viewer=view_result_default, tracke
     return video_file_name_out, result_video_json_file
 
 
-st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="/content/drive/MyDrive/Yolov8_Nightjars/YOLOV8/favicon-yolo.ico")
-st.title("YOLOv8 Dark Object Detection 📸")
-# create select box for selecting ultralytics YOLOv8 model
-# model_select = st.selectbox(
-#     "Select Ultralytics YOLOv8 model",
-#     [
-#         "yolov8n", "yolov8s", "yolov8m", "yolov8l", "yolov8x",
-#         "yolov8n-seg", "yolov8s-seg", "yolov8m-seg", "yolov8l-seg", "yolov8x-seg"
-#     ]
-# )
-# model_select = "yolov8xcdark.pt"
-# model = subprocess.run(['yolo', 'task=detect', 'mode=predict', 'model= model_select', 'conf=0.45', 'line_thickness=1'],capture_output=True, universal_newlines=True).stderr
-
-# model_seg = "yolov8xcdark-seg.pt"
-# model1 = subprocess.run(['yolo', 'task=detect', 'mode=predict', 'model= model_seg', 'conf=0.45', 'line_thickness=1'],capture_output=True, universal_newlines=True).stderr
 
 model_select = "yolov8xcdark.pt"
 model = YOLO(model_select,'conf=0.45')  # Model initialization
@@ -260,8 +245,8 @@ if source_index == 0:
 
 if source_index == 1:
 
-    st.header("Video & Live Cam Processing using YOLOv8")
-    video_file = st.file_uploader("Upload a video", type=["mp4"])
+    st.header("Video Processing using YOLOv8")
+    video_file = st.file_uploader("Upload a video 🔽", type=["mp4"])
     process_video_button = st.button("Process Video")
     if video_file is None and process_video_button:
         st.warning("Please upload a video file to be processed!")
@@ -279,182 +264,111 @@ if source_index == 1:
     
 
 if source_index == 2:
-    st.header("Live Stream Processing using YOLOv8")
-    tab_webcam = st.tabs(["Webcam Detections"])
+    st.caption("## Live Stream Processing using YOLOv8")
     p_time = 0
 
-    st.sidebar.title('Settings')
-    # Choose the model
     model_type = "YOLOv8"
     sample_img = cv2.imread('detective.png')
-    FRAME_WINDOW = st.image(sample_img, channels='BGR')
     cap = None
 
     if not model_type == 'YOLO Model':
-        path_model_file = f'yolov8.pt'
-        if model_type == 'YOLOv8':
-            # GPU
-            gpu_option = st.sidebar.radio(
-                'Choose between:', ('CPU', 'GPU'))
+        path_model_file = f'yolov8xcdark.pt'
 
-            # if not torch.cuda.is_available():
-            #     st.sidebar.warning('CUDA Not Available, So choose CPU', icon="⚠️")
-            # else:
-            #     st.sidebar.success(
-            #         'GPU is Available on this Device, Choose GPU for the best performance',
-            #         icon="✅"
-            #     )
-
-            # Model
-            if gpu_option == 'CPU':
-                model = custom(path_or_model=path_model_file)
-            if gpu_option == 'GPU':
-                model = custom(path_or_model=path_model_file, gpu=True)
-
-        
-
-        # Load Class names
-        class_labels = model.names
-
-
-        # Confidence
-        confidence = st.sidebar.slider(
-            'Detection Confidence', min_value=0.0, max_value=1.0, value=0.25)
-
-        # Draw thickness
-        draw_thick = st.sidebar.slider(
-            'Draw Thickness:', min_value=1,
-            max_value=20, value=3
-        )
-        
-        # Inference Mode
-        # Web-cam
-        
-        cam_options = st.selectbox('Webcam Channel',
+        cam_options = st.selectbox('Select the Cam Channel 🔽',
                                         ('Select Channel', '0', '1', '2', '3'))
+        st.write(" ")
     
         if not cam_options == 'Select Channel':
-            pred = st.checkbox(f'Predict Using {model_type}')
+            col_run, col_stop = st.columns(2)
+            run = col_run.button("Start Live Stream Processing")
+            stop = col_stop.button("Stop Live Stream Processing")
             cap = cv2.VideoCapture(int(cam_options))
-            if (cap != None) and pred:
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 900)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+            if stop:
+                run = False
+            FRAME_WINDOW = st.image([], width=720)
+            if run:
                 stframe1 = st.empty()
                 stframe2 = st.empty()
-                stframe3 = st.empty()
+                tracker = DeepSort(max_age=5)
+                centers = [deque(maxlen=30) for _ in range(10000)]
                 while True:
-                    success, img = cap.read()
+                    success, image = cap.read()
                     if not success:
-                        st.error(
-                            f" NOT working\nCheck {cam_options} properly!!",
-                            icon="🚨"
+                        st.info(
+                            f" NOT working\nCheck {cam_options} properly ⛔!!",
+                            icon="🎦"
                         )
                         break
-
-                    img, current_no_class = get_yolo(img, model_type, model, confidence, class_labels, draw_thick)
-                    FRAME_WINDOW.image(img, channels='BGR')
+                    image, result_list_json = image_processing(image, model, tracker=tracker, centers=centers)
+                    FRAME_WINDOW.image(image, channels='BGR', width=1000)
 
                     # FPS
                     c_time = time.time()
                     fps = 1 / (c_time - p_time)
                     p_time = c_time
-                        
-                    # Current number of classes
-                    class_fq = dict(Counter(i for sub in current_no_class for i in set(sub)))
-                    class_fq = json.dumps(class_fq, indent = 4)
-                    class_fq = json.loads(class_fq)
-                    df_fq = pd.DataFrame(class_fq.items(), columns=['Class', 'Number'])
-                        
+                
+                   
                         # Updating Inference results
-                    get_system_stat(stframe1, stframe2, stframe3, fps, df_fq)
+                    get_system_stat(stframe1, stframe2, fps)
+                tracker.delete_all_tracks()
+                centers.clear()
+
+
 
 
 if source_index == 3:
-    st.header("Live Stream Processing using YOLOv8")
-    tab_rtsp = st.tabs(["RTSP Detections"])
+    st.caption("## Real Time Streaming Protocol (RTSP) Processing using YOLOv8")
     p_time = 0
-
-    st.sidebar.title('Settings')
-    # Choose the model
     model_type = "YOLOv8"
-    sample_img = cv2.imread('detective.png')
-    FRAME_WINDOW = st.image(sample_img, channels='BGR')
     cap = None
 
     if not model_type == 'YOLO Model':
-        path_model_file = f'yolov8.pt'
-        if model_type == 'YOLOv8':
-            # GPU
-            gpu_option = st.sidebar.radio(
-                'Choose between:', ('CPU', 'GPU'))
 
-            # if not torch.cuda.is_available():
-            #     st.sidebar.warning('CUDA Not Available, So choose CPU', icon="⚠️")
-            # else:
-            #     st.sidebar.success(
-            #         'GPU is Available on this Device, Choose GPU for the best performance',
-            #         icon="✅"
-            #     )
-
-            # Model
-            if gpu_option == 'CPU':
-                model = custom(path_or_model=path_model_file)
-            if gpu_option == 'GPU':
-                model = custom(path_or_model=path_model_file, gpu=True)
-
-        
-
-        # Load Class names
-        class_labels = model.names
-
-
-        # Confidence
-        confidence = st.sidebar.slider(
-            'Detection Confidence', min_value=0.0, max_value=1.0, value=0.25)
-
-        # Draw thickness
-        draw_thick = st.sidebar.slider(
-            'Draw Thickness:', min_value=1,
-            max_value=20, value=3
-        )
-        
-
-
-        
         rtsp_url = st.text_input(
-            'RTSP URL:',
-            'eg: rtsp://admin:name6666@198.162.1.58/cam/realmonitor?channel=0&subtype=0'
-        )
-        pred1 = st.checkbox(f'Predict Using rtsp {model_type}')
-        cap = cv2.VideoCapture(rtsp_url)
-
-        if (cap != None) and pred1:
+            'RTSP URL 🔽:',
+            'eg: rtsp://admin:name6666@198.162.1.58/cam/realmonitor?channel=0&subtype=0')
+        
+    
+        if not rtsp_url == 'RTSP URL':
+            col_run, col_stop = st.columns(2)
+            run = col_run.button("Start Live Stream Processing")
+            stop = col_stop.button("Stop Live Stream Processing")
+            cap = cv2.VideoCapture(rtsp_url)
+            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1100)
+            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+            if stop:
+                run = False
+            FRAME_WINDOW = st.image([], width=720)
+            if run:
                 stframe1 = st.empty()
                 stframe2 = st.empty()
-                stframe3 = st.empty()
+                tracker = DeepSort(max_age=5)
+                centers = [deque(maxlen=30) for _ in range(10000)]
                 while True:
-                    success, img = cap.read()
+                    success, image = cap.read()
                     if not success:
-                        st.error(
-                            f" NOT working\nCheck {cam_options} properly!!",
-                            icon="🚨"
+                        st.info(
+                            f" NOT working\nCheck {rtsp_url} properly ⛔!!",
+                            icon="🎦"
                         )
                         break
-
-                    img, current_no_class = get_yolo(img, model_type, model, confidence, class_labels, draw_thick)
-                    FRAME_WINDOW.image(img, channels='BGR')
+                    image, result_list_json = image_processing(image, model, tracker=tracker, centers=centers)
+                    FRAME_WINDOW.image(image, channels='BGR', width=720)
 
                     # FPS
                     c_time = time.time()
                     fps = 1 / (c_time - p_time)
                     p_time = c_time
-                        
-                    # Current number of classes
-                    class_fq = dict(Counter(i for sub in current_no_class for i in set(sub)))
-                    class_fq = json.dumps(class_fq, indent = 4)
-                    class_fq = json.loads(class_fq)
-                    df_fq = pd.DataFrame(class_fq.items(), columns=['Class', 'Number'])
-                        
+                
+                   
                         # Updating Inference results
-                    get_system_stat(stframe1, stframe2, stframe3, fps, df_fq)
+                    get_system_stat(stframe1, stframe2, fps)
+
+                tracker.delete_all_tracks()
+                centers.clear()
+
 
 
 if source_index == 4:
@@ -463,31 +377,31 @@ if source_index == 4:
     p_time = 0
 
     
-#     RTC_CONFIGURATION = RTCConfiguration({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
+    RTC_CONFIGURATION = RTCConfiguration({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
 
-#     count = st_autorefresh(interval=4500, limit=1000000, key="fizzbuzzcounter")
+    count = st_autorefresh(interval=4500, limit=1000000, key="fizzbuzzcounter")
 
-#     import av
-#     from tts import *
+    import av
+    from tts import *
 
-#     class VideoTransformer(VideoTransformerBase):
-#         def __init__(self) -> None:
-#             super().__init__()
-#             self.frame_count = 0
+    class VideoTransformer(VideoTransformerBase):
+        def __init__(self) -> None:
+            super().__init__()
+            self.frame_count = 0
 
 
-#         def transform(self, frame):
-#             img = frame.to_ndarray(format="bgr24")
-#             new_img = get_frame_output(img, self.frame_count)
-#             return new_img
+        def transform(self, frame):
+            img = frame.to_ndarray(format="bgr24")
+            new_img = get_frame_output(img, self.frame_count)
+            return new_img
 
-#     # input - webcam video => transform() => final output arrived(retured to browser)
-#         def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
-#             new_image = self.transform(frame)
+    # input - webcam video => transform() => final output arrived(retured to browser)
+        def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
+            new_image = self.transform(frame)
             
-#             return av.VideoFrame.from_ndarray(new_image, format="bgr24")
+            return av.VideoFrame.from_ndarray(new_image, format="bgr24")
 
 
         
-#     webrtc_streamer(key="WYH", media_stream_constraints={"video": True, "audio": False}, 
-#                     video_processor_factory=VideoTransformer,)
+    webrtc_streamer(key="WYH", media_stream_constraints={"video": True, "audio": False}, 
+                    video_processor_factory=VideoTransformer,)
