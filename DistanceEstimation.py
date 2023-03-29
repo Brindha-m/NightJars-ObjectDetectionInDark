@@ -135,8 +135,6 @@ person_width_in_rf = person_data[0][1]
 chair_data = object_detector(ref_person)
 chair_width_in_rf = chair_data[0][1]
 
-lap_data = object_detector(ref_laptop)
-lap_width_in_rf = person_data[0][1]
 
 # print(f"Person width in pixels : {person_width_in_rf} mobile width in pixel: {mobile_width_in_rf}")
 
@@ -144,7 +142,7 @@ lap_width_in_rf = person_data[0][1]
 focal_person = focal_length_finder(KNOWN_DISTANCE, PERSON_WIDTH, person_width_in_rf)
 focal_mobile = focal_length_finder(KNOWN_DISTANCE, MOBILE_WIDTH, person_width_in_rf)
 focal_chair = focal_length_finder(KNOWN_DISTANCE, CHAIR_WIDTH, chair_width_in_rf)
-focal_latop = focal_length_finder(KNOWN_DISTANCE, LAPTOP_WIDTH, lap_width_in_rf)
+
 
 #d[]
 
@@ -162,9 +160,6 @@ def get_frame_output(frame, frame_cnt):
             distance = distance_finder (focal_chair, CHAIR_WIDTH, d[1])
             x, y = d[2]
         
-        elif d[0] == 'laptop':
-            distance = distance_finder (focal_latop, LAPTOP_WIDTH, d[1])
-            x, y = d[2]
         
         text1,text2=d[3],d[4]
 
