@@ -128,8 +128,6 @@ ref_mobile = cv.imread('ReferenceImages/image4.png')
 ref_chair = cv.imread('ReferenceImages/image22.png')
 ref_laptop = cv.imread('ReferenceImages/image2.png')
 
-mobile_data = object_detector(ref_mobile)
-mobile_width_in_rf = mobile_data[1][1]
 
 person_data = object_detector(ref_person)
 person_width_in_rf = person_data[0][1]
@@ -144,7 +142,7 @@ lap_width_in_rf = person_data[0][1]
 
 # finding focal length 
 focal_person = focal_length_finder(KNOWN_DISTANCE, PERSON_WIDTH, person_width_in_rf)
-focal_mobile = focal_length_finder(KNOWN_DISTANCE, MOBILE_WIDTH, mobile_width_in_rf)
+focal_mobile = focal_length_finder(KNOWN_DISTANCE, MOBILE_WIDTH, person_width_in_rf)
 focal_chair = focal_length_finder(KNOWN_DISTANCE, CHAIR_WIDTH, chair_width_in_rf)
 focal_latop = focal_length_finder(KNOWN_DISTANCE, LAPTOP_WIDTH, lap_width_in_rf)
 
