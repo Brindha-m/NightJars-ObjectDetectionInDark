@@ -14,7 +14,7 @@ from ultralytics.yolo.engine.results import Results
 import json
 from model_utils import get_system_stat
 from streamlit_webrtc import RTCConfiguration, VideoTransformerBase, webrtc_streamer
-from DistanceEstimation import *
+#from DistanceEstimation import *
 from streamlit_autorefresh import st_autorefresh
 import streamlit as st
 
@@ -384,24 +384,24 @@ if source_index == 4:
     import av
     from tts import *
 
-    class VideoTransformer(VideoTransformerBase):
-        def __init__(self) -> None:
-            super().__init__()
-            self.frame_count = 0
+#     class VideoTransformer(VideoTransformerBase):
+#         def __init__(self) -> None:
+#             super().__init__()
+#             self.frame_count = 0
 
 
-        def transform(self, frame):
-            img = frame.to_ndarray(format="bgr24")
-            new_img = get_frame_output(img, self.frame_count)
-            return new_img
+#         def transform(self, frame):
+#             img = frame.to_ndarray(format="bgr24")
+#             new_img = get_frame_output(img, self.frame_count)
+#             return new_img
 
-    # input - webcam video => transform() => final output arrived(retured to browser)
-        def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
-            new_image = self.transform(frame)
+#     # input - webcam video => transform() => final output arrived(retured to browser)
+#         def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
+#             new_image = self.transform(frame)
             
-            return av.VideoFrame.from_ndarray(new_image, format="bgr24")
+#             return av.VideoFrame.from_ndarray(new_image, format="bgr24")
 
 
         
-    webrtc_streamer(key="WYH", media_stream_constraints={"video": True, "audio": False}, 
-                    video_processor_factory=VideoTransformer,)
+#     webrtc_streamer(key="WYH", media_stream_constraints={"video": True, "audio": False}, 
+#                     video_processor_factory=VideoTransformer,)
