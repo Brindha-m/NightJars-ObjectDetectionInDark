@@ -15,41 +15,7 @@ def get_gpu_memory():
     return gpu_memory[0]
 
 
-
-
-def get_yolo(img, model_type, model, confidence, class_list, draw_thick):
-    current_no_class = []
-    results = model(img)
-    if model_type == 'YOLOv8':
-        box = results.pandas().xyxy[0]
-
-        for i in box.index:
-            xmin, ymin, xmax, ymax, conf, id, class_name = int(box['xmin'][i]), int(box['ymin'][i]), int(box['xmax'][i]), \
-                int(box['ymax'][i]), box['confidence'][i], box['class'][i], box['name'][i]
-            if conf > confidence:
-                plot_one_box([xmin, ymin, xmax, ymax], img, label=class_name,
-                                line_thickness=draw_thick)
-            current_no_class.append([class_name])
-
-    # if model_type == 'YOLOv8':
-    #     for result in results:
-    #         bboxs = result.boxes.xyxy
-    #         conf = result.boxes.conf
-    #         cls = result.boxes.cls
-    #         for bbox, cnf, cs in zip(bboxs, conf, cls):
-    #             xmin = int(bbox[0])
-    #             ymin = int(bbox[1])
-    #             xmax = int(bbox[2])
-    #             ymax = int(bbox[3])
-    #             if cnf > confidence:
-    #                 plot_one_box([xmin, ymin, xmax, ymax], img, label=class_list[int(cs)],
-    #                                 color=color_pick_list[int(cs)], line_thickness=draw_thick)
-    #                 current_no_class.append([class_list[int(cs)]])
-    
-    return img, current_no_class
-
-
-def get_system_stat(stframe1, stframe2, stframe3, fps, df_fq):
+def get_system_stat(stframe1, stframe2, fps):
     # Updating Inference results
     with stframe1.container():
         st.markdown("<h2>Inference Statistics</h2>", unsafe_allow_html=True)
@@ -59,10 +25,6 @@ def get_system_stat(stframe1, stframe2, stframe3, fps, df_fq):
             st.markdown(f"<h4 style='color:blue;'>Frame Rate: {round(fps, 4)}</h4>", unsafe_allow_html=True)
     
     with stframe2.container():
-        st.markdown("<h3>Detected objects in curret Frame</h3>", unsafe_allow_html=True)
-        st.dataframe(df_fq, use_container_width=True)
-
-    with stframe3.container():
         st.markdown("<h2>System Statistics</h2>", unsafe_allow_html=True)
         js1, js2, js3 = st.columns(3)                       
 
