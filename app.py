@@ -282,7 +282,7 @@ if source_index == 2:
             col_run, col_stop = st.columns(2)
             run = col_run.button("Start Live Stream Processing")
             stop = col_stop.button("Stop Live Stream Processing")
-            #cap = cv2.VideoCapture(int(cam_options))
+            cap = cv2.VideoCapture(int(cam_options))
             
             cap.set(cv2.CAP_PROP_FRAME_WIDTH, 900)
             cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
@@ -290,12 +290,13 @@ if source_index == 2:
                 run = False
             FRAME_WINDOW = st.image([], width=720)
             if run:
+                cap = cv2.VideoCapture(int(cam_options))
                 stframe1 = st.empty()
                 stframe2 = st.empty()
                 tracker = DeepSort(max_age=5)
                 centers = [deque(maxlen=30) for _ in range(10000)]
                 while True:
-                    cap = cv2.VideoCapture(0)
+                    
                     success, image = cap.read()
                     if not success:
                         st.info(
