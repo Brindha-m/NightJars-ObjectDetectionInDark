@@ -283,7 +283,7 @@ if source_index == 2:
             run = col_run.button("Start Live Stream Processing")
             stop = col_stop.button("Stop Live Stream Processing")
             #cap = cv2.VideoCapture(int(cam_options))
-            cap = cv2.VideoCapture(0)
+            
             cap.set(cv2.CAP_PROP_FRAME_WIDTH, 900)
             cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
             if stop:
@@ -295,6 +295,7 @@ if source_index == 2:
                 tracker = DeepSort(max_age=5)
                 centers = [deque(maxlen=30) for _ in range(10000)]
                 while True:
+                    cap = cv2.VideoCapture(0)
                     success, image = cap.read()
                     if not success:
                         st.info(
