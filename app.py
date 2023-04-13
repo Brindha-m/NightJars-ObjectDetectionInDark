@@ -290,7 +290,6 @@ if source_index == 2:
                 run = False
             FRAME_WINDOW = st.image([], width=720)
             if run:
-                cap = cv2.VideoCapture(int(cam_options))
                 stframe1 = st.empty()
                 stframe2 = st.empty()
                 tracker = DeepSort(max_age=5)
