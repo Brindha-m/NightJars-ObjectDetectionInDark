@@ -14,7 +14,7 @@ from ultralytics.yolo.engine.results import Results
 import json
 from model_utils import get_system_stat
 from streamlit_webrtc import RTCConfiguration, VideoTransformerBase, webrtc_streamer
-#from DistanceEstimation import *
+from DistanceEstimation import *
 from streamlit_autorefresh import st_autorefresh
 import streamlit as st
 
@@ -24,7 +24,7 @@ COLORS = [(56, 56, 255), (151, 157, 255), (31, 112, 255), (29, 178, 255), (49, 2
           (236, 24, 0), (255, 56, 132), (133, 0, 82), (255, 56, 203), (200, 149, 255), (199, 55, 255)]
 
 
-st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="/content/drive/MyDrive/Yolov8_Nightjars/YOLOV8/favicon-yolo.ico")
+st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="detective.ico")
 st.sidebar.image("nsidelogo.png")
 st.image("nsidelogoo.png")
 
@@ -257,9 +257,10 @@ if source_index == 1:
             open(video_file.name, "wb").write(video_file.read())
             video_file_out, result_video_json_file = video_processing(video_file.name, model, tracker=tracker, centers=centers)
             os.remove(video_file.name)
+            st.video(video_file_out)
             # print(json.dumps(result_video_json_file, indent=2))
-            video_bytes = open(video_file_out, 'rb').read()
-            st.video(video_bytes)
+            # video_bytes = open(video_file_out, 'rb').read()
+            # st.video(video_bytes)
 
     
 
@@ -283,7 +284,6 @@ if source_index == 2:
             run = col_run.button("Start Live Stream Processing")
             stop = col_stop.button("Stop Live Stream Processing")
             cap = cv2.VideoCapture(int(cam_options))
-            
             cap.set(cv2.CAP_PROP_FRAME_WIDTH, 900)
             cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
             if stop:
@@ -295,7 +295,6 @@ if source_index == 2:
                 tracker = DeepSort(max_age=5)
                 centers = [deque(maxlen=30) for _ in range(10000)]
                 while True:
-                    
                     success, image = cap.read()
                     if not success:
                         st.info(
@@ -386,24 +385,24 @@ if source_index == 4:
     import av
     from tts import *
 
-#     class VideoTransformer(VideoTransformerBase):
-#         def __init__(self) -> None:
-#             super().__init__()
-#             self.frame_count = 0
+    class VideoTransformer(VideoTransformerBase):
+        def __init__(self) -> None:
+            super().__init__()
+            self.frame_count = 0
 
 
-#         def transform(self, frame):
-#             img = frame.to_ndarray(format="bgr24")
-#             new_img = get_frame_output(img, self.frame_count)
-#             return new_img
+        def transform(self, frame):
+            img = frame.to_ndarray(format="bgr24")
+            new_img = get_frame_output(img, self.frame_count)
+            return new_img
 
-#     # input - webcam video => transform() => final output arrived(retured to browser)
-#         def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
-#             new_image = self.transform(frame)
+    # input - webcam video => transform() => final output arrived(retured to browser)
+        def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
+            new_image = self.transform(frame)
             
-#             return av.VideoFrame.from_ndarray(new_image, format="bgr24")
+            return av.VideoFrame.from_ndarray(new_image, format="bgr24")
 
 
         
-#     webrtc_streamer(key="WYH", media_stream_constraints={"video": True, "audio": False}, 
-#                     video_processor_factory=VideoTransformer,)
+    webrtc_streamer(key="WYH", media_stream_constraints={"video": True, "audio": False}, 
+                    video_processor_factory=VideoTransformer,)
