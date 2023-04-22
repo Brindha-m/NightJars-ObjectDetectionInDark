@@ -132,17 +132,19 @@ def distance_finder(focal_length, real_object_width, width_in_frmae):
 
 # reading the reference image from dir 
 ref_person = cv.imread('ReferenceImages/image14.png')
-ref_mobile = cv.imread('ReferenceImages/image1.png')
+ref_mobile = cv.imread('ReferenceImages/mobile.jpg')
 ref_chair = cv.imread('ReferenceImages/image22.png')
 ref_laptop = cv.imread('ReferenceImages/image2.png')
 cup_image_path = cv.imread('ReferenceImages/cup.jpg')
 kb_image_path =cv.imread('ReferenceImages/keyboard.jpg')
 
-mobile_data = object_detector(ref_mobile)
-mobile_width_in_rf = mobile_data[1][1]
+
 
 person_data = object_detector(ref_person)
 person_width_in_rf = person_data[0][1]
+
+mobile_data = object_detector(ref_mobile)
+mobile_width_in_rf = mobile_data[1][1]
 
 chair_data = object_detector(ref_person)
 chair_width_in_rf = chair_data[0][1]
