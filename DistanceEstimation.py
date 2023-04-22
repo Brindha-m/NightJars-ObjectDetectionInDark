@@ -131,7 +131,7 @@ def distance_finder(focal_length, real_object_width, width_in_frmae):
     return distance
 
 # reading the reference image from dir 
-ref_person = cv.imread('ReferenceImages/image14.png')
+ref_person = cv.imread('ReferenceImages/person.jpg')
 ref_mobile = cv.imread('ReferenceImages/mobile.jpg')
 ref_chair = cv.imread('ReferenceImages/image22.png')
 ref_laptop = cv.imread('ReferenceImages/image2.png')
