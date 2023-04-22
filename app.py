@@ -14,7 +14,7 @@ from ultralytics.yolo.engine.results import Results
 import json
 from model_utils import get_system_stat
 from streamlit_webrtc import RTCConfiguration, VideoTransformerBase, webrtc_streamer
-from DistanceEstimation import *
+# from DistanceEstimation import *
 from streamlit_autorefresh import st_autorefresh
 import streamlit as st
 
@@ -404,5 +404,5 @@ if source_index == 4:
 
 
         
-    webrtc_streamer(key="WYH", media_stream_constraints={"video": True, "audio": False}, 
-                    video_processor_factory=VideoTransformer,)
+#     webrtc_streamer(key="WYH", media_stream_constraints={"video": True, "audio": False}, 
+#                     video_processor_factory=VideoTransformer,)
