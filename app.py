@@ -9,8 +9,9 @@ from deep_sort_realtime.deepsort_tracker import DeepSort
 from stqdm import stqdm
 from collections import Counter
 import time
-from ultralytics import YOLO
-from ultralytics.yolo.engine.results import Results
+from ultralytics.models.yolo import YOLO
+#from ultralytics import YOLO
+from ultralytics.engine.results import Results
 import json
 from model_utils import get_system_stat
 from streamlit_webrtc import RTCConfiguration, VideoTransformerBase, webrtc_streamer
