@@ -55,7 +55,8 @@ def result_to_json(result: Results, tracker=None):
     if result.masks is not None:
         for idx in range(len_results):
             result_list_json[idx]['mask'] = cv2.resize(result.masks.data[idx].cpu().numpy(), (result.orig_shape[1], result.orig_shape[0])).tolist()
-            result_list_json[idx]['segments'] = result.masks.segments[idx].tolist()
+            result_list_json[idx]['segments'] = result.masks.xy[idx].tolist()
+        
     if tracker is not None:
         bbs = [
             (
