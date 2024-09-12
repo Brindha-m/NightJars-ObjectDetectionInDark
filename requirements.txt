@@ -17,6 +17,10 @@ av
 numpy
 opencv-python-headless==4.5.5.64
 stqdm
+opencv-python
+numpy
+stqdm
+deep-sort-realtime
 
 setuptools
 
