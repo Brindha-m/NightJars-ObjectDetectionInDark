@@ -11,15 +11,7 @@ streamlit_webrtc
 deep-sort-realtime
 
 # Base ----------------------------------------
-matplotlib
-Pillow
-PyYAML
-requests
-scipy
-torch
-torchvision
-tqdm
-protobuf
+
 
 av==9.2.0
 numpy==1.22.4
