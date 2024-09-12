@@ -513,4 +513,4 @@ if source_index == 4:
     )
     st.cache_data.clear()
 
-gc,collect()
+gc.collect()
