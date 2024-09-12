@@ -200,7 +200,6 @@ st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="/co
 st.title("YOLOv8 Dark Object Detection 📸")
 
 model_select = "yolov8xcdark.pt"
-
 model = YOLO(model_select,'conf=0.45')  # Model initialization
 model_seg = "yolov8xcdark-seg.pt"
 model1 = YOLO(model_seg)  # Model initialization
