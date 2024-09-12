@@ -14,12 +14,11 @@ deep-sort-realtime
 
 
 av
-numpy==1.22.4
+numpy
 opencv-python-headless==4.5.5.64
 stqdm
 
-
-distutils
+setuptools
 
 # Extras --- for tts
 ibm_cloud_sdk_core==3.15.3
