@@ -10,7 +10,7 @@ from stqdm import stqdm
 from collections import Counter
 import time
 from ultralytics import YOLO
-from ultralytics.yolo.engine.results import Results
+from ultralytics.engine.results import Results
 import json
 from model_utils import get_yolo, get_system_stat
 from streamlit_webrtc import RTCConfiguration, VideoTransformerBase, webrtc_streamer
