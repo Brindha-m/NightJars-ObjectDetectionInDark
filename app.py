@@ -351,6 +351,7 @@ if source_index == 2:
                   
                     # Display the processed frame
                     FRAME_WINDOW.image(processed_frame, channels='BGR')
+                    st.cache_data.clear()
 
                     
                     # FPS
@@ -367,7 +368,7 @@ if source_index == 2:
                         # Updating Inference results
                     get_system_stat(stframe1, stframe2, stframe3, fps, df_fq)
                     
-                    cap.release()
+                    
 
 
 if source_index == 3:
@@ -428,7 +429,7 @@ if source_index == 3:
                 stframe1 = st.empty()
                 stframe2 = st.empty()
                 stframe3 = st.empty()
-                frame_cnt = 0  
+                
                 tracker = DeepSort(max_age=5)
                 centers = [deque(maxlen=30) for _ in range(10000)]
 
@@ -464,9 +465,8 @@ if source_index == 3:
                    
                         # Updating Inference results
                     get_system_stat(stframe1, stframe2, stframe3, fps, df_fq)
-                    # Updating Inference results                    
-                    frame_cnt += 1
-
+                                    
+                    
 
 class VideoTransformer(VideoTransformerBase):
     def __init__(self) -> None:
@@ -505,3 +505,4 @@ if source_index == 4:
         media_stream_constraints={"video": True, "audio": False},
         video_processor_factory=VideoTransformer
     )
+    st.cache_data.clear()
