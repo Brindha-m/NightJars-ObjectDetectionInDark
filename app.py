@@ -325,7 +325,7 @@ if source_index == 2:
                 stframe3 = st.empty()
                 tracker = DeepSort(max_age=5)
                 centers = [deque(maxlen=30) for _ in range(10000)]
-                frame_cnt = 0  
+                
                 
                 while True:
                     success, img = cap.read()
@@ -366,9 +366,8 @@ if source_index == 2:
 
                         # Updating Inference results
                     get_system_stat(stframe1, stframe2, stframe3, fps, df_fq)
-                    # Updating Inference results                    
-                    frame_cnt += 1
-      cap.release()
+                    
+                    cap.release()
 
 
 if source_index == 3:
