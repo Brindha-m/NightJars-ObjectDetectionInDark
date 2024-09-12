@@ -31,7 +31,7 @@ COLORS = [(56, 56, 255), (151, 157, 255), (31, 112, 255), (29, 178, 255), (49, 2
           (236, 24, 0), (255, 56, 132), (133, 0, 82), (255, 56, 203), (200, 149, 255), (199, 55, 255)]
 
 
-@st.experimental_singleton
+
 def result_to_json(result: Results, tracker=None):
     """
     Convert result from ultralytics YOLOv8 prediction to json format
@@ -80,7 +80,7 @@ def result_to_json(result: Results, tracker=None):
     return result_list_json
 
 
-@st.experimental_singleton
+
 def view_result_ultralytics(result: Results, result_list_json, centers=None):
     """
     Visualize result from ultralytics YOLOv8 prediction using ultralytics YOLOv8 built-in visualization function
