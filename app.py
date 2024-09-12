@@ -20,7 +20,7 @@ from streamlit_autorefresh import st_autorefresh
 import streamlit as st
 import av
 from tts import *
-import gc
+
 
 
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
@@ -513,4 +513,4 @@ if source_index == 4:
     )
     st.cache_data.clear()
 
-gc.collect()
+
