@@ -15,9 +15,9 @@ deep-sort-realtime
 
 av
 numpy
-opencv-python-headless==4.5.5.64
+opencv-python-headless
 stqdm
-opencv-python
+
 numpy
 stqdm
 deep-sort-realtime
