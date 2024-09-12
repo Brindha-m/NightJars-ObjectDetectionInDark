@@ -1,4 +1,5 @@
 import os
+os.environ["MY_ENV_VARIABLE"] = "True"
 import cv2
 import json
 import subprocess
