@@ -133,7 +133,7 @@ def view_result_default(result: Results, result_list_json, centers=None):
                 cv2.line(image, centers[result['object_id']][j - 1], centers[result['object_id']][j], class_color, thickness)
     return image
 
-
+@st.cache
 def image_processing(frame, model, image_viewer=view_result_default, tracker=None, centers=None):
     """
     Process image frame using ultralytics YOLOv8 model and possibly DeepSort tracker if it is provided
@@ -200,7 +200,7 @@ st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="/co
 st.title("YOLOv8 Dark Object Detection 📸")
 
 model_select = "yolov8xcdark.pt"
-@st.cache
+
 model = YOLO(model_select,'conf=0.45')  # Model initialization
 model_seg = "yolov8xcdark-seg.pt"
 model1 = YOLO(model_seg)  # Model initialization
@@ -229,7 +229,7 @@ if source_index == 0:
             
         #     ## for detection with bb
             print(f"Used Custom reframed YOLOv8 model: {model_select}")
-            @st.cache
+           
             img, result_list_json = image_processing(img, model)
             # print(json.dumps(result_list_json, indent=2))
             st.success("✅ Task Detect : Detection using custom-trained v8 model")
@@ -444,7 +444,7 @@ if source_index == 3:
                         )
                         break
 
-                    @st.cache
+                    
                     # Call DeepSort for tracking
                     img, result_list_json = image_processing(img, model, image_viewer=view_result_default, tracker=tracker, centers=centers)
 
