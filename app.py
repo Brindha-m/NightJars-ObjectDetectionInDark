@@ -335,6 +335,7 @@ if source_index == 2:
                             icon="🚨"
                         )
                         break
+                              
 
  
                     # # Call get_yolo to get detections
@@ -367,6 +368,7 @@ if source_index == 2:
                     get_system_stat(stframe1, stframe2, stframe3, fps, df_fq)
                     # Updating Inference results                    
                     frame_cnt += 1
+      cap.release()
 
 
 if source_index == 3:
