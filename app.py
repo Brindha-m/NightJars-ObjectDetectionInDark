@@ -137,7 +137,7 @@ def view_result_default(result: Results, result_list_json, centers=None):
                 cv2.line(image, centers[result['object_id']][j - 1], centers[result['object_id']][j], class_color, thickness)
     return image
 
-@st.cache_data
+
 def image_processing(frame, model, image_viewer=view_result_default, tracker=None, centers=None):
     """
     Process image frame using ultralytics YOLOv8 model and possibly DeepSort tracker if it is provided
@@ -156,7 +156,7 @@ def image_processing(frame, model, image_viewer=view_result_default, tracker=Non
     result_image = image_viewer(results[0], result_list_json, centers=centers)
     return result_image, result_list_json
 
-@st.cache_data
+# @st.cache_data
 def video_processing(video_file, model, image_viewer=view_result_default, tracker=None, centers=None):
     """
     Process video file using ultralytics YOLOv8 model and possibly DeepSort tracker if it is provided
