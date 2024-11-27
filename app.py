@@ -1,5 +1,4 @@
 import os
-os.environ["MY_ENV_VARIABLE"] = "True"
 import cv2
 import json
 import subprocess
@@ -11,7 +10,7 @@ from stqdm import stqdm
 from collections import Counter
 import time
 from ultralytics import YOLO
-from ultralytics.engine.results import Results
+from ultralytics.yolo.engine.results import Results
 import json
 from model_utils import get_yolo, get_system_stat
 from streamlit_webrtc import RTCConfiguration, VideoTransformerBase, webrtc_streamer
@@ -21,15 +20,12 @@ import streamlit as st
 import av
 from tts import *
 
-
-
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 # colors for visualization for image visualization
 COLORS = [(56, 56, 255), (151, 157, 255), (31, 112, 255), (29, 178, 255), (49, 210, 207), (10, 249, 72), (23, 204, 146),
           (134, 219, 61), (52, 147, 26), (187, 212, 0), (168, 153, 44), (255, 194, 0), (147, 69, 52), (255, 115, 100),
           (236, 24, 0), (255, 56, 132), (133, 0, 82), (255, 56, 203), (200, 149, 255), (199, 55, 255)]
-
 
 
 def result_to_json(result: Results, tracker=None):
@@ -78,7 +74,6 @@ def result_to_json(result: Results, tracker=None):
             if track_idx != -1:
                 result_list_json[idx]['object_id'] = int(tracks[track_idx].track_id)
     return result_list_json
-
 
 
 def view_result_ultralytics(result: Results, result_list_json, centers=None):
@@ -156,7 +151,7 @@ def image_processing(frame, model, image_viewer=view_result_default, tracker=Non
     result_image = image_viewer(results[0], result_list_json, centers=centers)
     return result_image, result_list_json
 
-# @st.cache_data
+
 def video_processing(video_file, model, image_viewer=view_result_default, tracker=None, centers=None):
     """
     Process video file using ultralytics YOLOv8 model and possibly DeepSort tracker if it is provided
@@ -213,7 +208,6 @@ source = ("Image Detection📸", "Video Detections📽️", "Live Camera Detecti
 source_index = st.sidebar.selectbox("Select Input type", range(
         len(source)), format_func=lambda x: source[x])
 
-
 # Image detection section
 
 if source_index == 0:
@@ -233,7 +227,6 @@ if source_index == 0:
             
         #     ## for detection with bb
             print(f"Used Custom reframed YOLOv8 model: {model_select}")
-           
             img, result_list_json = image_processing(img, model)
             # print(json.dumps(result_list_json, indent=2))
             st.success("✅ Task Detect : Detection using custom-trained v8 model")
@@ -331,7 +324,7 @@ if source_index == 2:
                 stframe3 = st.empty()
                 tracker = DeepSort(max_age=5)
                 centers = [deque(maxlen=30) for _ in range(10000)]
-                
+                frame_cnt = 0  
                 
                 while True:
                     success, img = cap.read()
@@ -341,7 +334,6 @@ if source_index == 2:
                             icon="🚨"
                         )
                         break
-                              
 
  
                     # # Call get_yolo to get detections
@@ -357,7 +349,6 @@ if source_index == 2:
                   
                     # Display the processed frame
                     FRAME_WINDOW.image(processed_frame, channels='BGR')
-                    st.cache_data.clear()
 
                     
                     # FPS
@@ -373,8 +364,8 @@ if source_index == 2:
 
                         # Updating Inference results
                     get_system_stat(stframe1, stframe2, stframe3, fps, df_fq)
-                    
-                    
+                    # Updating Inference results                    
+                    frame_cnt += 1
 
 
 if source_index == 3:
@@ -435,7 +426,7 @@ if source_index == 3:
                 stframe1 = st.empty()
                 stframe2 = st.empty()
                 stframe3 = st.empty()
-                
+                frame_cnt = 0  
                 tracker = DeepSort(max_age=5)
                 centers = [deque(maxlen=30) for _ in range(10000)]
 
@@ -448,7 +439,7 @@ if source_index == 3:
                         )
                         break
 
-                    
+                   
                     # Call DeepSort for tracking
                     img, result_list_json = image_processing(img, model, image_viewer=view_result_default, tracker=tracker, centers=centers)
 
@@ -471,8 +462,9 @@ if source_index == 3:
                    
                         # Updating Inference results
                     get_system_stat(stframe1, stframe2, stframe3, fps, df_fq)
-                                    
-                    
+                    # Updating Inference results                    
+                    frame_cnt += 1
+
 
 class VideoTransformer(VideoTransformerBase):
     def __init__(self) -> None:
@@ -511,6 +503,3 @@ if source_index == 4:
         media_stream_constraints={"video": True, "audio": False},
         video_processor_factory=VideoTransformer
     )
-    st.cache_data.clear()
-
-
