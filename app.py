@@ -48,10 +48,15 @@ def result_to_json(result: Results, tracker=None):
             'class': result.names[int(result.boxes.cls[idx])],
             'confidence': float(result.boxes.conf[idx]),
             'bbox': {
-                'x_min': int(result.boxes.boxes[idx][0]),
-                'y_min': int(result.boxes.boxes[idx][1]),
-                'x_max': int(result.boxes.boxes[idx][2]),
-                'y_max': int(result.boxes.boxes[idx][3]),
+                'x_min': int(result.boxes.xyxy[idx][0]),
+                'y_min': int(result.boxes.xyxy[idx][1]),
+                'x_max': int(result.boxes.xyxy[idx][2]),
+                'y_max': int(result.boxes.xyxy[idx][3]),
+                
+                # 'x_min': int(result.boxes.boxes[idx][0]),
+                # 'y_min': int(result.boxes.boxes[idx][1]),
+                # 'x_max': int(result.boxes.boxes[idx][2]),
+                # 'y_max': int(result.boxes.boxes[idx][3]),
             },
         } for idx in range(len_results)
     ]
