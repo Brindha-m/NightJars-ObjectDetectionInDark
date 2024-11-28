@@ -207,14 +207,16 @@ def video_processing(video_file, model, image_viewer=view_result_default, tracke
 
 
 st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="/content/drive/MyDrive/Yolov8_Nightjars/YOLOV8/favicon-yolo.ico")
-st.title("YOLOv8 Dark Object Detection 📸")
+st.title("Intel Custom YOLOv8 Dark Object Detection 📸🕵🏻‍♀️")
 
 model_select = "yolov8xcdark.pt"
-# optimodelintel = ipex.optimize(model_select, dtype=torch.bfloat16)
-model = YOLO("yolo11x.pt",'conf=0.45')  # Model initialization
+optimodelintel = ipex.optimize(model_select)
+st.write(optimodelintel)
+model = YOLO(model_select,'conf=0.45')  # Model initialization
 model_seg = "yolov8xcdark-seg.pt"
 model1 = YOLO(model_seg)  # Model initialization
 
+st.write(optimodelintel.eval())          
 
 source = ("Image Detection📸", "Video Detections📽️", "Live Camera Detection🤳🏻","RTSP","MOBILE CAM")
 source_index = st.sidebar.selectbox("Select Input type", range(
