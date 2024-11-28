@@ -20,7 +20,8 @@ from streamlit_autorefresh import st_autorefresh
 import streamlit as st
 import av
 from tts import *
-
+import torch
+import intel_extension_for_pytorch as ipex
 
 
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
@@ -209,7 +210,8 @@ st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="/co
 st.title("YOLOv8 Dark Object Detection 📸")
 
 model_select = "yolov8xcdark.pt"
-model = YOLO(model_select,'conf=0.45')  # Model initialization
+optimodelintel = ipex.optimize(model_select, dtype=torch.bfloat16)
+model = YOLO(optimodelintel,'conf=0.45')  # Model initialization
 model_seg = "yolov8xcdark-seg.pt"
 model1 = YOLO(model_seg)  # Model initialization
 
