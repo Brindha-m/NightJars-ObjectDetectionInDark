@@ -211,7 +211,7 @@ st.title("YOLOv8 Dark Object Detection 📸")
 
 model_select = "yolov8xcdark.pt"
 # optimodelintel = ipex.optimize(model_select, dtype=torch.bfloat16)
-model = YOLO(ipex.optimize(model_select, dtype=torch.bfloat16),'conf=0.45')  # Model initialization
+model = YOLO("yolo11x.pt",'conf=0.45')  # Model initialization
 model_seg = "yolov8xcdark-seg.pt"
 model1 = YOLO(model_seg)  # Model initialization
 
