@@ -261,7 +261,6 @@ if source_index == 0:
  
 
 # Video & Live cam section
-@st.cache_data(persist="disk")
 if source_index == 1:
 
     st.header("Video & Live Cam Processing using YOLOv8")
