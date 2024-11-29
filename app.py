@@ -305,41 +305,27 @@ if source_index == 0:
         if image_file is not None and process_image_button:
             st.write(" ")
             st.sidebar.success("Successfully uploaded")
-            st.sidebar.image(image_file,caption="Uploaded image")
+            st.sidebar.image(image_file, caption="Uploaded image")
             img = cv2.imdecode(np.frombuffer(image_file.read(), np.uint8), 1)
             
-        #     ## for detection with bb
+            # For detection with bounding boxes
             print(f"Used Custom reframed YOLOv8 model: {model_select}")
-           
+            
             img, result_list_json = image_processing(img, model)
-            # print(json.dumps(result_list_json, indent=2))
-            st.success("✅ Task Detect : Detection using custom-trained v8 model")
-            st.image(img, caption="Detected image", channels="BGR")
-
-        if image_file is not None and process_seg_button:
-            st.write(" ")
-            st.sidebar.success("Successfully uploaded")
-            st.sidebar.image(image_file,caption="Uploaded image")
-            img = cv2.imdecode(np.frombuffer(image_file.read(), np.uint8), 1) 
-           
-            ## for detection with bb & segmentation masks
-
-            img, result_list_json = image_processing(img, model1)
-            st.success("✅ Task Segment: Segmentation using v8 model")
-            detected_img_classes = [item['class'] for item in result_list_json]
-            class_fq = Counter(detected_img_classes)
+            
+            # Current number of classes
+            detected_classes = [item['class'] for item in result_list_json]
+            class_fq = Counter(detected_classes)
             
             # Create a DataFrame for class frequency
             df_fq = pd.DataFrame(class_fq.items(), columns=['Class', 'Number'])
             
             # Display class frequency count as a table
             st.write("Class Frequency:")
-            st.dataframe(df_fq)
-
-            st.image(img, caption="Segmented image", channels="BGR")
-                 
-           
-           
+            st.dataframe(df_fq)  # Display the class frequency DataFrame
+            
+            st.success("✅ Task Detect : Detection using custom-trained v8 model")
+            st.image(img, caption="Detected image", channels="BGR")        
            
  
 
