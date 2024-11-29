@@ -130,7 +130,7 @@ def view_result_default(result: Results, result_list_json, centers=None):
     image = result.orig_img
     for result in result_list_json:
         class_color = COLORS[result['class_id'] % len(COLORS)]
-        fontFace = "/content/drive/MyDrive/Yolov8_Nightjars/models/ahronbd.ttf"
+        # fontFace = "/content/drive/MyDrive/Yolov8_Nightjars/models/ahronbd.ttf"
         fontScale = 1
         if 'mask' in result:
             image_mask = np.stack([np.array(result['mask']) * class_color[0], np.array(result['mask']) * class_color[1], np.array(result['mask']) * class_color[2]], axis=-1).astype(np.uint8)
@@ -164,6 +164,18 @@ def image_processing(frame, model, image_viewer=view_result_default, tracker=Non
         result_list_json: detection result in json format
     """
     results = model.predict(frame)
+   
+    class_names = results.names  # Class names for the detected objects
+    inference_time = results.speed['inference']  # Inference time in ms
+
+    detections = results.pandas().xywh[["class", "confidence", "name"]]
+    class_count = detections["name"].value_counts()  # Count of each class detected
+    class_info = ", ".join([f"{count} {class_names[class_id]}" for class_id, count in class_count.items()])
+
+    result_string = f"{class_info}, {inference_time:.1f}ms"
+    
+    st.write(result_string)
+          
     result_list_json = result_to_json(results[0], tracker=tracker)
     result_image = image_viewer(results[0], result_list_json, centers=centers)
     return result_image, result_list_json
