@@ -244,6 +244,7 @@ def device_widget():
 # Define device widget for user selection
 device = device_widget()
 
+# Function to load and compile OpenVINO models
 @st.cache_resource
 def load_openvino_model(det_model_path, device):
     det_ov_model = core.read_model(det_model_path)
@@ -256,12 +257,11 @@ def load_openvino_model(det_model_path, device):
     return det_compiled_model
 
 # Paths to the pre-exported OpenVINO models
-det_model_path = Path("yolovc8x_openvino_model/yolovc8x.xml")
-# seg_model_path = Path("yolov8xcdark-seg_openvino_model/yolov8xcdark-seg.xml")
+det_model_path = Path("yolov8xcdark_openvino_model/yolov8xcdark.xml")
 
-# Load the compiled models
-model = load_openvino_model(det_model_path, device)
-# seg_model = load_openvino_model(seg_model_path, device)
+# Load the compiled detection model
+ov_model = load_openvino_model(det_model_path, device)
+model = YOLO("yolov8xcdark_openvino_model/")
 
 # Cache model paths
 model1= YOLO("yolov8xcdark-seg.pt")
