@@ -23,6 +23,9 @@ from tts import *
 import torch
 import intel_extension_for_pytorch as ipex
 import openvino.runtime as ov
+import gc
+from pathlib import Path
+
 
 # ov_model = ov.Core().read_model("yolov8x_openvino_model/")
 
@@ -207,10 +210,10 @@ def video_processing(video_file, model, image_viewer=view_result_default, tracke
     return video_file_name_out, result_video_json_file
 
 
-@st.cache_resource
-def load_model(model_path):
-    # Load and return the YOLO model
-    return YOLO(model_path)
+# @st.cache_resource
+# def load_model(model_path):
+#     # Load and return the YOLO model
+#     return YOLO(model_path)
 
 
 
@@ -220,18 +223,73 @@ st.title("Intel Custom YOLOv8 Dark Object Detection 📸🕵🏻‍♀️")
 
 
 
+# # Cache model paths
+# model_select = "yolov8xcdark.pt"
+# model_seg = "yolov8xcdark-seg.pt"
+
+# # Load models
+# model = load_model(model_select)
+# model1 = load_model(model_seg)
+
+# Global OpenVINO core instance
+core = ov.Core()
+
+# Define device widget for user selection
+device = utils.device_widget()
+
+# Function to compile OpenVINO models
+@st.cache_resource
+def compile_model(det_model_path, device):
+    det_ov_model = core.read_model(det_model_path)
+
+    # OpenVINO configuration
+    ov_config = {}
+    if device != "CPU":
+        det_ov_model.reshape({0: [1, 3, 640, 640]})
+    if "GPU" in device or ("AUTO" in device and "GPU" in core.available_devices):
+        ov_config = {"GPU_DISABLE_WINOGRAD_CONVOLUTION": "YES"}
+
+    det_compiled_model = core.compile_model(det_ov_model, device, ov_config)
+    return det_compiled_model
+
+# Function to load YOLO model and integrate OpenVINO
+@st.cache_resource
+def load_openvino_model(det_model_path, device):
+    compiled_model = compile_model(det_model_path, device)
+    det_model = YOLO(det_model_path.parent, task="detect")
+
+    if det_model.predictor is None:
+        custom = {"conf": 0.25, "batch": 1, "save": False, "mode": "predict"}  # Default arguments
+        args = {**det_model.overrides, **custom}
+        det_model.predictor = det_model._smart_load("predictor")(overrides=args, _callbacks=det_model.callbacks)
+        det_model.predictor.setup_model(model=det_model.model)
+
+    det_model.predictor.model.ov_compiled_model = compiled_model
+    return det_model
+
+# Function to export and cache the model
+@st.cache_resource
+def export_and_load_model(model_name, device):
+    det_model_path = Path(f"{model_name}_openvino_model/{model_name}.xml")
+
+    if not det_model_path.exists():
+        pt_model = YOLO(f"{model_name}.pt")
+        pt_model.export(format="openvino", dynamic=True, half=True)
+        del pt_model
+        gc.collect()
+
+    return load_openvino_model(det_model_path, device)
+
 # Cache model paths
-model_select = "yolov8xcdark.pt"
-model_seg = "yolov8xcdark-seg.pt"
+model_select = "yolov8xcdark"
+model_seg = "yolov8xcdark-seg"
 
-# Load models
-model = load_model(model_select)
-model1 = load_model(model_seg)
+# Load detection model
+model = export_and_load_model(model_select, device.value)
+model1 = export_and_load_model(model_seg, device.value)
 
-# Export the model
-# model.export(format="openvino")  # creates 'yolov8n_openvino_model/'
-# # Load the exported OpenVINO model
-# ov_model = YOLO("yolov8n_openvino_model/")
+st.write("Models loaded successfully!")
+
 
 source = ("Image Detection📸", "Video Detections📽️", "Live Camera Detection🤳🏻","RTSP","MOBILE CAM")
 source_index = st.sidebar.selectbox("Select Input type", range(
