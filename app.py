@@ -166,9 +166,6 @@ def image_processing(frame, model, image_viewer=view_result_default, tracker=Non
     results = model.predict(frame)
     result_list_json = result_to_json(results[0], tracker=tracker)
     result_image = image_viewer(results[0], result_list_json, centers=centers)
-    result_list_json = result_to_json(results[0], tracker=tracker)
-    st.write("Detection Results (JSON):")
-    st.json(result_list_json)  #
     return result_image, result_list_json
 
 # @st.cache_data
