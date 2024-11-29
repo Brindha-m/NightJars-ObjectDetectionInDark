@@ -553,55 +553,36 @@ if source_index == 3:
                                     
                     
 
-class VideoTransformer(VideoTransformerBase):
-    def __init__(self) -> None:
-        super().__init__()
-        self.frame_count = 0
-        self.tracker = DeepSort(max_age=5)  # Initialize the DeepSort tracker
-        self.centers = [deque(maxlen=30) for _ in range(10000)]  # Initialize centers deque
+RTC_CONFIGURATION = RTCConfiguration({
+    "iceServers": [
+        {"urls": ["stun:openrelay.metered.ca:80"]},
+        {"urls": ["turn:openrelay.metered.ca:80"], "username": "user", "credential": "pass"}
+    ]
+})
 
-    def transform(self, frame):
+
+
+class VideoTransformer:
+    def __init__(self):
+        self.yolo_model = load_model_from_github(model_dir, device)  # Load your model here
+
+    def recv(self, frame):
         img = frame.to_ndarray(format="bgr24")
-        
-        # Process the frame using image_processing
-        img, result_list_json = image_processing(img, model, image_viewer=view_result_default, tracker=self.tracker, centers=self.centers)
-        
-        # Call get_frame_output to overlay distance information
-        processed_frame = get_live_frame_output(img, result_list_json)
-        
-        return processed_frame
+        img, _ = image_processing(img, self.yolo_model)
+        return av.VideoFrame.from_ndarray(img, format="bgr24")
 
-    def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
-        new_image = self.transform(frame)
-        return av.VideoFrame.from_ndarray(new_image, format="bgr24")
-
-# Streamlit application
 if source_index == 4:
-    st.header("Live Stream Processing using YOLOv8")
-    webcam_st = st.tabs(["St webcam"])
-    p_time = 0
-
-    # RTC_CONFIGURATION = RTCConfiguration({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
-
-    RTC_CONFIGURATION = RTCConfiguration({
-              "iceServers": [
-                  {"urls": ["stun:openrelay.metered.ca:80"]},  # Free public STUN server
-                  {"urls": ["turn:openrelay.metered.ca:80"], "username": "user", "credential": "pass"}  # Example TURN server
-              ]
-          })
-          
+    st.set_page_config(page_title="YOLOv8 Live Stream", layout="wide")
+    st.title("Live Stream Processing using YOLOv8 📸")
     count = st_autorefresh(interval=4500, limit=1000000, key="fizzbuzzcounter")
     try:
-      webrtc_streamer(
-        key="test",
-        media_stream_constraints={"video": True, "audio": False},
-        video_processor_factory=VideoTransformer
-    )
+        webrtc_streamer(
+            key="test",
+            media_stream_constraints={"video": {"frameRate": {"ideal": 15, "max": 15}, "width": {"ideal": 640}, "height": {"ideal": 480}}, "audio": False},
+            video_processor_factory=VideoTransformer,
+            rtc_configuration=RTC_CONFIGURATION
+        )
     except Exception as e:
-      st.error(f"Error initializing WebRTC: {e}")
-    # webrtc_streamer(
-    #     key="test",
-    #     media_stream_constraints={"video": True, "audio": False},
-    #     video_processor_factory=VideoTransformer
-    # )
+        st.error(f"Error initializing WebRTC: {e}")
+
     st.cache_data.clear()
