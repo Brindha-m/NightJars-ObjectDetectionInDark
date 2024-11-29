@@ -525,13 +525,27 @@ if source_index == 4:
     webcam_st = st.tabs(["St webcam"])
     p_time = 0
 
-    RTC_CONFIGURATION = RTCConfiguration({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
+    # RTC_CONFIGURATION = RTCConfiguration({"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]})
 
+    RTC_CONFIGURATION = RTCConfiguration({
+              "iceServers": [
+                  {"urls": ["stun:openrelay.metered.ca:80"]},  # Free public STUN server
+                  {"urls": ["turn:openrelay.metered.ca:80"], "username": "user", "credential": "pass"}  # Example TURN server
+              ]
+          })
+          
     count = st_autorefresh(interval=4500, limit=1000000, key="fizzbuzzcounter")
-
-    webrtc_streamer(
+    try:
+      webrtc_streamer(
         key="test",
         media_stream_constraints={"video": True, "audio": False},
         video_processor_factory=VideoTransformer
     )
+    except Exception as e:
+      st.error(f"Error initializing WebRTC: {e}")
+    # webrtc_streamer(
+    #     key="test",
+    #     media_stream_constraints={"video": True, "audio": False},
+    #     video_processor_factory=VideoTransformer
+    # )
     st.cache_data.clear()
