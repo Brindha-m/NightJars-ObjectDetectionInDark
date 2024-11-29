@@ -231,11 +231,19 @@ st.title("Intel Custom YOLOv8 Dark Object Detection 📸🕵🏻‍♀️")
 # model = load_model(model_select)
 # model1 = load_model(model_seg)
 
+
 # Global OpenVINO core instance
 core = ov.Core()
 
+# Device selection widget
+def device_widget():
+    """Streamlit widget for selecting an OpenVINO device."""
+    devices = ["CPU"] + core.available_devices
+    selected_device = st.selectbox("Select Device for Model Inference:", devices, index=0)
+    return selected_device
+
 # Define device widget for user selection
-device = utils.device_widget()
+device = device_widget()
 
 # Function to compile OpenVINO models
 @st.cache_resource
@@ -285,10 +293,11 @@ model_select = "yolov8xcdark"
 model_seg = "yolov8xcdark-seg"
 
 # Load detection model
-model = export_and_load_model(model_select, device.value)
-model1 = export_and_load_model(model_seg, device.value)
+model = export_and_load_model(model_select, device)
+model1 = export_and_load_model(model_seg, device)
 
 st.write("Models loaded successfully!")
+
 
 
 source = ("Image Detection📸", "Video Detections📽️", "Live Camera Detection🤳🏻","RTSP","MOBILE CAM")
