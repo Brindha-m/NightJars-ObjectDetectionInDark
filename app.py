@@ -282,14 +282,8 @@ model = load_openvino_model(det_model_dir, device)
 
 st.write("Models loaded successfully!")
 
-
 # Cache model paths
 model1= YOLO("yolov8xcdark-seg.pt")
-
-
-
-st.write("Models loaded successfully!")
-
 
 
 source = ("Image Detection📸", "Video Detections📽️", "Live Camera Detection🤳🏻","RTSP","MOBILE CAM")
