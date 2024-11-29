@@ -257,7 +257,8 @@ def load_openvino_model(det_model_path, device):
     return det_compiled_model
 
 # Paths to the pre-exported OpenVINO models
-det_model_path = Path("yolov8xcdark_openvino_model/yolov8xcdark.xml")
+# det_model_path = Path("https://github.com/Brindha-m/NightJars-ObjectDetectionInDark/blob/a95d338dd04100e11c32428d53684adcf8d282f6/yolovc8x_openvino_model/yolovc8x.xml")
+det_model_path = Path(__file__).parent / "yolovc8x_openvino_model/yolovc8x.xml"
 
 # Load the compiled detection model
 ov_model = load_openvino_model(det_model_path, device)
