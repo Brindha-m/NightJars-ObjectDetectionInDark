@@ -164,20 +164,11 @@ def image_processing(frame, model, image_viewer=view_result_default, tracker=Non
         result_list_json: detection result in json format
     """
     results = model.predict(frame)
-   
-    class_names = results.names  # Class names for the detected objects
-    inference_time = results.speed['inference']  # Inference time in ms
-
-    detections = results.pandas().xywh[["class", "confidence", "name"]]
-    class_count = detections["name"].value_counts()  # Count of each class detected
-    class_info = ", ".join([f"{count} {class_names[class_id]}" for class_id, count in class_count.items()])
-
-    result_string = f"{class_info}, {inference_time:.1f}ms"
-    
-    st.write(result_string)
-          
     result_list_json = result_to_json(results[0], tracker=tracker)
     result_image = image_viewer(results[0], result_list_json, centers=centers)
+    result_list_json = result_to_json(results[0], tracker=tracker)
+    st.write("Detection Results (JSON):")
+    st.json(result_list_json)  #
     return result_image, result_list_json
 
 # @st.cache_data
@@ -335,7 +326,7 @@ if source_index == 0:
             img = cv2.imdecode(np.frombuffer(image_file.read(), np.uint8), 1) 
            
             ## for detection with bb & segmentation masks
-            print(f"Segmentation YOLOv8 model: {model1}")
+
             img, result_list_json = image_processing(img, model1)
             st.success("✅ Task Segment: Segmentation using v8 model")
             st.image(img, caption="Segmented image", channels="BGR")
