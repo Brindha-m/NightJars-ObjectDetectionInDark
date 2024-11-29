@@ -312,7 +312,8 @@ if source_index == 0:
             print(f"Used Custom reframed YOLOv8 model: {model_select}")
             
             img, result_list_json = image_processing(img, model)
-            
+            st.success("✅ Task Detect : Detection using custom-trained v8 model")
+            st.image(img, caption="Detected image", channels="BGR")     
             # Current number of classes
             detected_classes = [item['class'] for item in result_list_json]
             class_fq = Counter(detected_classes)
@@ -324,8 +325,7 @@ if source_index == 0:
             st.write("Class Frequency:")
             st.dataframe(df_fq)  # Display the class frequency DataFrame
             
-            st.success("✅ Task Detect : Detection using custom-trained v8 model")
-            st.image(img, caption="Detected image", channels="BGR")        
+               
            
  
 
