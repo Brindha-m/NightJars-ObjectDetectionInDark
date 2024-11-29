@@ -207,23 +207,27 @@ def video_processing(video_file, model, image_viewer=view_result_default, tracke
     return video_file_name_out, result_video_json_file
 
 
+@st.cache_resource
+def load_model(model_path):
+    # Load and return the YOLO model
+    return YOLO(model_path)
+
+
 
 
 st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="/content/drive/MyDrive/Yolov8_Nightjars/YOLOV8/favicon-yolo.ico")
 st.title("Intel Custom YOLOv8 Dark Object Detection 📸🕵🏻‍♀️")
 
-@st.cache_resource
-def load_model_path(model_path):
-    # Cache only the model path and load it fresh each time
-    return model_path
 
-# Cache the model paths
-model_select = load_model_path("yolov8xcdark.pt")
-model_seg = load_model_path("yolov8xcdark-seg.pt")
 
-# Load models (not cached directly but using cached paths)
-model = YOLO(model_select, conf=0.45)
-model1 = YOLO(model_seg)
+# Cache model paths
+model_select = "yolov8xcdark.pt"
+model_seg = "yolov8xcdark-seg.pt"
+
+# Load models
+model = load_model(model_select)
+model1 = load_model(model_seg)
+
 # Export the model
 # model.export(format="openvino")  # creates 'yolov8n_openvino_model/'
 # # Load the exported OpenVINO model
