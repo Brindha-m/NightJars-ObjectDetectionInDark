@@ -256,7 +256,7 @@ def load_openvino_model(det_model_path, device):
     return det_compiled_model
 
 # Paths to the pre-exported OpenVINO models
-det_model_path = Path("yolov8xcdark_openvino_model/yolov8xc.xml")
+det_model_path = Path("yolovc8x_openvino_model/yolovc8x.xml")
 # seg_model_path = Path("yolov8xcdark-seg_openvino_model/yolov8xcdark-seg.xml")
 
 # Load the compiled models
