@@ -218,7 +218,7 @@ model_seg = "yolov8xcdark-seg.pt"
 model1 = YOLO(model_seg)  # Model initialization
 
 # Export the model
-model_select.export(format="openvino")  # creates 'yolov8n_openvino_model/'
+model.export(format="openvino")  # creates 'yolov8n_openvino_model/'
 # Load the exported OpenVINO model
 ov_model = YOLO("yolov8n_openvino_model/")
 
