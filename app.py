@@ -572,7 +572,6 @@ class VideoTransformer:
         return av.VideoFrame.from_ndarray(img, format="bgr24")
 
 if source_index == 4:
-    st.set_page_config(page_title="YOLOv8 Live Stream", layout="wide")
     st.title("Live Stream Processing using YOLOv8 📸")
     count = st_autorefresh(interval=4500, limit=1000000, key="fizzbuzzcounter")
     try:
