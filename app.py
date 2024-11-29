@@ -226,9 +226,9 @@ model_seg = "yolov8xcdark-seg.pt"
 model1 = load_model(model_seg)
 
 # Export the model
-model.export(format="openvino")  # creates 'yolov8n_openvino_model/'
-# Load the exported OpenVINO model
-ov_model = YOLO("yolov8n_openvino_model/")
+# model.export(format="openvino")  # creates 'yolov8n_openvino_model/'
+# # Load the exported OpenVINO model
+# ov_model = YOLO("yolov8n_openvino_model/")
 
 source = ("Image Detection📸", "Video Detections📽️", "Live Camera Detection🤳🏻","RTSP","MOBILE CAM")
 source_index = st.sidebar.selectbox("Select Input type", range(
@@ -255,7 +255,7 @@ if source_index == 0:
         #     ## for detection with bb
             print(f"Used Custom reframed YOLOv8 model: {model_select}")
            
-            img, result_list_json = image_processing(img, ov_model)
+            img, result_list_json = image_processing(img, model)
             # print(json.dumps(result_list_json, indent=2))
             st.success("✅ Task Detect : Detection using custom-trained v8 model")
             st.image(img, caption="Detected image", channels="BGR")
@@ -288,7 +288,7 @@ if source_index == 1:
             tracker = DeepSort(max_age=5)
             centers = [deque(maxlen=30) for _ in range(10000)]
             open(video_file.name, "wb").write(video_file.read())
-            video_file_out, result_video_json_file = video_processing(video_file.name, ov_model, tracker=tracker, centers=centers)
+            video_file_out, result_video_json_file = video_processing(video_file.name, model, tracker=tracker, centers=centers)
             os.remove(video_file.name)
             # print(json.dumps(result_video_json_file, indent=2))
             video_bytes = open(video_file_out, 'rb').read()
@@ -316,9 +316,9 @@ if source_index == 2:
                 'Choose between:', ('CPU', 'GPU'))
             # Model
             if gpu_option == 'CPU':
-                model = ov_model
+                model = model
             if gpu_option == 'GPU':
-                model = ov_model
+                model = model
 
         
 
@@ -368,7 +368,7 @@ if source_index == 2:
                     # img, current_no_class = get_yolo(img, model_type, model, confidence, class_labels, draw_thick)
 
                     # Call DeepSort for tracking
-                    img, result_list_json = image_processing(img, ov_model, image_viewer=view_result_default, tracker=tracker, centers=centers)
+                    img, result_list_json = image_processing(img, model, image_viewer=view_result_default, tracker=tracker, centers=centers)
 
                     # # Call get_frame_output to overlay distance information
                     processed_frame = get_live_frame_output(img, result_list_json)
@@ -419,10 +419,10 @@ if source_index == 3:
         
             # Model
             if gpu_option == 'CPU':
-                model = ov_model
+                model = model
                 # model = custom(path_or_model=path_model_file)
             if gpu_option == 'GPU':
-                model = ov_model
+                model = model
                 # model = custom(path_or_model=path_model_file, gpu=True)
 
         
@@ -470,7 +470,7 @@ if source_index == 3:
 
                     
                     # Call DeepSort for tracking
-                    img, result_list_json = image_processing(img, ov_model, image_viewer=view_result_default, tracker=tracker, centers=centers)
+                    img, result_list_json = image_processing(img, model, image_viewer=view_result_default, tracker=tracker, centers=centers)
 
                     # # Call get_frame_output to overlay distance information
                     processed_frame = get_live_frame_output(img, result_list_json)
@@ -505,7 +505,7 @@ class VideoTransformer(VideoTransformerBase):
         img = frame.to_ndarray(format="bgr24")
         
         # Process the frame using image_processing
-        img, result_list_json = image_processing(img, ov_model, image_viewer=view_result_default, tracker=self.tracker, centers=self.centers)
+        img, result_list_json = image_processing(img, model, image_viewer=view_result_default, tracker=self.tracker, centers=self.centers)
         
         # Call get_frame_output to overlay distance information
         processed_frame = get_live_frame_output(img, result_list_json)
