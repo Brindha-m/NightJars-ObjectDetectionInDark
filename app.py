@@ -212,10 +212,18 @@ def video_processing(video_file, model, image_viewer=view_result_default, tracke
 st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="/content/drive/MyDrive/Yolov8_Nightjars/YOLOV8/favicon-yolo.ico")
 st.title("Intel Custom YOLOv8 Dark Object Detection 📸🕵🏻‍♀️")
 
+@st.cache_resource
+def load_model(model_select, conf=0.45):
+    # Load the YOLO model and return it
+    return YOLO(model_select, conf=conf)
+
+# Model initialization with caching
 model_select = "yolov8xcdark.pt"
-model = YOLO(model_select,'conf=0.45')  # Model initialization
+model = load_model(model_select, conf=0.45)
+
+# Model initialization for segmentation model with caching
 model_seg = "yolov8xcdark-seg.pt"
-model1 = YOLO(model_seg)  # Model initialization
+model1 = load_model(model_seg)
 
 # Export the model
 model.export(format="openvino")  # creates 'yolov8n_openvino_model/'
