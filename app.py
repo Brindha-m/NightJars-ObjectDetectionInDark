@@ -548,6 +548,7 @@ if source_index == 3:
                                     
                     
 
+
 class VideoTransformer(VideoTransformerBase):
     def __init__(self) -> None:
         super().__init__()
@@ -569,6 +570,7 @@ class VideoTransformer(VideoTransformerBase):
     def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
         new_image = self.transform(frame)
         return av.VideoFrame.from_ndarray(new_image, format="bgr24")
+
 
 # Streamlit application
 if source_index == 4:
