@@ -262,7 +262,7 @@ det_model_path = Path(__file__).parent / "yolovc8x_openvino_model/yolovc8x.xml"
 
 # Load the compiled detection model
 ov_model = load_openvino_model(det_model_path, device)
-model = YOLO("yolov8xcdark_openvino_model/")
+model = YOLO("./yolov8xcdark_openvino_model/")
 
 # Cache model paths
 model1= YOLO("yolov8xcdark-seg.pt")
