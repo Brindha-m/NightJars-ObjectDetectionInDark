@@ -330,6 +330,17 @@ if source_index == 0:
             img, result_list_json = image_processing(img, model1)
             st.success("✅ Task Segment: Segmentation using v8 model")
             st.image(img, caption="Segmented image", channels="BGR")
+                  # Current number of classes
+           
+            detected_img_classes = [item['class'] for item in result_list_json]
+            class_fq = Counter(detected_img_classes)
+            
+            # Create a DataFrame for class frequency
+            df_fq = pd.DataFrame(class_fq.items(), columns=['Class', 'Number'])
+            
+            # Display class frequency count as a table
+            st.write("Class Frequency:")
+            st.dataframe(df_fq)
 
            
  
