@@ -24,7 +24,7 @@ import torch
 import intel_extension_for_pytorch as ipex
 import openvino.runtime as ov
 
-ov_model = ov.Core().read_model("yolov8n_openvino_model/")
+ov_model = ov.Core().read_model("yolov8x_openvino_model/")
 
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
