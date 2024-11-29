@@ -213,18 +213,17 @@ st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="/co
 st.title("Intel Custom YOLOv8 Dark Object Detection 📸🕵🏻‍♀️")
 
 @st.cache_resource
-def load_model(model_select):
-    # Load the YOLO model and return it
-    return YOLO(model_select, conf=0.45)
+def load_model_path(model_path):
+    # Cache only the model path and load it fresh each time
+    return model_path
 
-# Model initialization with caching
-model_select = "yolov8xcdark.pt"
-model = load_model(model_select)
+# Cache the model paths
+model_select = load_model_path("yolov8xcdark.pt")
+model_seg = load_model_path("yolov8xcdark-seg.pt")
 
-# Model initialization for segmentation model with caching
-model_seg = "yolov8xcdark-seg.pt"
-model1 = load_model(model_seg)
-
+# Load models (not cached directly but using cached paths)
+model = YOLO(model_select, conf=0.45)
+model1 = YOLO(model_seg)
 # Export the model
 # model.export(format="openvino")  # creates 'yolov8n_openvino_model/'
 # # Load the exported OpenVINO model
