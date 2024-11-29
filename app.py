@@ -548,6 +548,15 @@ if source_index == 3:
                                     
                     
 
+class VideoTransformer:
+    def __init__(self):
+        self.yolo_model = model  # Use the pre-loaded model
+
+    def recv(self, frame):
+        img = frame.to_ndarray(format="bgr24")
+        img, _ = image_processing(img, self.yolo_model)
+        return av.VideoFrame.from_ndarray(img, format="bgr24")
+
 RTC_CONFIGURATION = RTCConfiguration({
     "iceServers": [
         {"urls": ["stun:openrelay.metered.ca:80"]},
@@ -556,18 +565,9 @@ RTC_CONFIGURATION = RTCConfiguration({
 })
 
 
-
-class VideoTransformer:
-    def __init__(self):
-        self.yolo_model = load_model_from_github(model_dir, device)  # Load your model here
-
-    def recv(self, frame):
-        img = frame.to_ndarray(format="bgr24")
-        img, _ = image_processing(img, self.yolo_model)
-        return av.VideoFrame.from_ndarray(img, format="bgr24")
-
 if source_index == 4:
     st.title("Live Stream Processing using YOLOv8 📸")
+          
     count = st_autorefresh(interval=4500, limit=1000000, key="fizzbuzzcounter")
     try:
         webrtc_streamer(
