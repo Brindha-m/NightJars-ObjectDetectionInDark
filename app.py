@@ -213,13 +213,13 @@ st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="/co
 st.title("Intel Custom YOLOv8 Dark Object Detection 📸🕵🏻‍♀️")
 
 @st.cache_resource
-def load_model(model_select, conf=0.45):
+def load_model(model_select):
     # Load the YOLO model and return it
-    return YOLO(model_select, conf=conf)
+    return YOLO(model_select, conf=0.45)
 
 # Model initialization with caching
 model_select = "yolov8xcdark.pt"
-model = load_model(model_select, conf=0.45)
+model = load_model(model_select)
 
 # Model initialization for segmentation model with caching
 model_seg = "yolov8xcdark-seg.pt"
