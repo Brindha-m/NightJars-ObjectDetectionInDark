@@ -25,6 +25,18 @@ import intel_extension_for_pytorch as ipex
 import openvino.runtime as ov
 import gc
 from pathlib import Path
+import gdown
+
+file_id = '1hE6iWo6RmrH5i-z7H2yfvzYi8kh8dMlC'
+local_filename = 'yolov8x_openvino_model'
+
+# Check if the file already exists
+if not os.path.exists(local_filename):
+    print(f"File {local_filename} not found locally. Downloading from Google Drive...")
+    # Download the file from Google Drive
+    gdown.download(f"https://drive.google.com/uc?export=download&id={file_id}", local_filename, quiet=True)
+else:
+    print(f"File {local_filename} already exists locally. Skipping download.")
 
 
 # ov_model = ov.Core().read_model("yolov8x_openvino_model/")
@@ -272,7 +284,7 @@ def load_openvino_model(model_dir, device):
 device = "CPU"  # Change as per your environment: "GPU", "AUTO", etc.
 
 # Paths to the pre-exported OpenVINO models
-det_model_dir = "/content/drive/MyDrive/yolovc8x_openvino_model"  # Detection model directory
+det_model_dir = local_filename  # Detection model directory
 seg_model_dir = "yolov8xcdark_openvino_model"  # Segmentation model directory (adjust as necessary)
 
 # Load the detection and segmentation models
