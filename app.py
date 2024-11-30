@@ -29,7 +29,6 @@ import gdown
 
 file_id = '1hE6iWo6RmrH5i-z7H2yfvzYi8kh8dMlC'
 local_filename = 'yolov8x_openvino_model'
-
 # Check if the file already exists
 if not os.path.exists(local_filename):
     print(f"File {local_filename} not found locally. Downloading from Google Drive...")
