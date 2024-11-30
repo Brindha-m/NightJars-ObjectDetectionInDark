@@ -266,14 +266,14 @@ device = "CPU"  # Change environment: "GPU", "AUTO", etc.
 # Function to download file from Google Drive
 @st.cache_resource
 def download_file_from_gdrive(file_id, local_filename):
-    url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    url = f"https://drive.google.com/drive/folders/uc?export=download&id={file_id}"
     if not os.path.exists(local_filename):
         gdown.download(url, local_filename, quiet=False)
     else:
         print(f"File {local_filename} already exists locally. Skipping download.")
 
 # Define file IDs and local paths
-file_id_detection = '1hE6iWo6RmrH5i-z7H2yfvzYi8kh8dMlC'
+file_id_detection = '1xJjc2B4ReV3mjnYOdppfKVlqiXZXFGfK'
 local_filename_detection = 'yolovc8x_openvino_model.zip'
 
 # Download model files
