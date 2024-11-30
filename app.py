@@ -26,19 +26,9 @@ import openvino.runtime as ov
 import gc
 from pathlib import Path
 import gdown
-
-file_id = '1hE6iWo6RmrH5i-z7H2yfvzYi8kh8dMlC'
-local_filename = 'yolov8x_openvino_model'
-# Check if the file already exists
-if not os.path.exists(local_filename):
-    print(f"File {local_filename} not found locally. Downloading from Google Drive...")
-    # Download the file from Google Drive
-    gdown.download(f"https://drive.google.com/uc?export=download&id={file_id}", local_filename, quiet=True)
-else:
-    print(f"File {local_filename} already exists locally. Skipping download.")
-
-
-# ov_model = ov.Core().read_model("yolov8x_openvino_model/")
+import requests
+import os
+import zipfile
 
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
@@ -233,15 +223,6 @@ st.set_page_config(page_title="NightJars YOLOv8 ", layout="wide", page_icon="det
 st.title("Intel Custom YOLOv8 Dark Object Detection 📸🕵🏻‍♀️")
 
 
-
-# # Cache model paths
-# model_select = "yolov8xcdark.pt"
-# model_seg = "yolov8xcdark-seg.pt"
-
-# # Load models
-# model = load_model(model_select)
-# model1 = load_model(model_seg)
-
 # Global OpenVINO core instance
 core = ov.Core()
 
@@ -278,22 +259,48 @@ def load_openvino_model(model_dir, device):
 
     det_model.predictor.model.ov_compiled_model = compiled_model
     return det_model
+    
 
-# Specify device
-device = "CPU"  # Change as per your environment: "GPU", "AUTO", etc.
+device = "CPU"  # Change environment: "GPU", "AUTO", etc.
 
-# Paths to the pre-exported OpenVINO models
-det_model_dir = local_filename  # Detection model directory
-seg_model_dir = "yolov8xcdark_openvino_model"  # Segmentation model directory (adjust as necessary)
 
-# Load the detection and segmentation models
-model = load_openvino_model(det_model_dir, device)
-# Uncomment and adjust for segmentation model if needed
-# model1 = load_openvino_model(seg_model_dir, device)
+# Google Drive file ID
+file_id = '1hE6iWo6RmrH5i-z7H2yfvzYi8kh8dMlC'
+local_filename = 'yolov8x_openvino_model.zip'
+
+download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
+
+# Check if the file already exists
+if not os.path.exists(local_filename):
+    print(f"File {local_filename} not found locally. Downloading from Google Drive...")
+
+    # Download the file
+    with requests.get(download_url, stream=True) as response:
+        if response.status_code == 200:
+            with open(local_filename, 'wb') as file:
+                for chunk in response.iter_content(chunk_size=8192):
+                    file.write(chunk)
+            print(f"Downloaded {local_filename} successfully.")
+        else:
+            print(f"Failed to download file. HTTP Status Code: {response.status_code}")
+else:
+    print(f"File {local_filename} already exists locally. Skipping download.")
+
+# Extract ZIP 
+if local_filename.endswith('.zip'):
+    extract_dir = "yolov8x_openvino_model"
+    with zipfile.ZipFile(local_filename, 'r') as zip_ref:
+        zip_ref.extractall(extract_dir)
+        print(f"Extracted {local_filename} into '{extract_dir}' directory.")
+
+det_model_dir = "yolov8x_openvino_model"  # Detection model directory
+
+# Load the detection model
+model = load_openvino_model(Path(det_model_dir) / "yolovc8x.xml", device)
 
 st.write("Models loaded successfully!")
 
-# Cache model paths
+# Cache seg model paths
 model1= YOLO("yolov8xcdark-seg.pt")
 
 
