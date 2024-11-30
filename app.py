@@ -273,9 +273,8 @@ def download_file_from_gdrive(file_id, local_filename):
         print(f"File {local_filename} already exists locally. Skipping download.")
 
 # Define file IDs and local paths
-file_id_detection = '1xJjc2B4ReV3mjnYOdppfKVlqiXZXFGfK'
+file_id_detection = '1hE6iWo6RmrH5i-z7H2yfvzYi8kh8dMlC'
 local_filename_detection = 'yolovc8x_openvino_model.zip'
-
 # Download model files
 download_file_from_gdrive(file_id_detection, local_filename_detection)
 
