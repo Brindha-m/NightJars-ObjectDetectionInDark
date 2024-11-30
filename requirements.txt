@@ -30,3 +30,4 @@ ibm_watson==6.0.0
 torch
 intel-extension-for-pytorch 
 openvino
+gdown
