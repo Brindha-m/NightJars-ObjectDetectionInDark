@@ -272,7 +272,7 @@ def load_openvino_model(model_dir, device):
 device = "CPU"  # Change as per your environment: "GPU", "AUTO", etc.
 
 # Paths to the pre-exported OpenVINO models
-det_model_dir = "yolovc8x_openvino_model"  # Detection model directory
+det_model_dir = "/content/drive/MyDrive/yolovc8x_openvino_model"  # Detection model directory
 seg_model_dir = "yolov8xcdark_openvino_model"  # Segmentation model directory (adjust as necessary)
 
 # Load the detection and segmentation models
