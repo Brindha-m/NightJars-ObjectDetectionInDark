@@ -264,6 +264,7 @@ def load_openvino_model(model_dir, device):
 device = "CPU"  # Change environment: "GPU", "AUTO", etc.
 
 # Function to download file from Google Drive
+@st.cache_resource
 def download_file_from_gdrive(file_id, local_filename):
     url = f"https://drive.google.com/uc?export=download&id={file_id}"
     if not os.path.exists(local_filename):
@@ -274,23 +275,17 @@ def download_file_from_gdrive(file_id, local_filename):
 # Define file IDs and local paths
 file_id_detection = '1hE6iWo6RmrH5i-z7H2yfvzYi8kh8dMlC'
 local_filename_detection = 'yolovc8x_openvino_model.zip'
-# file_id_segmentation = 'your_file_id_for_segmentation_model'  # Replace with actual file ID
-# local_filename_segmentation = 'yolov8xcdark_openvino_model.zip'
 
 # Download model files
 download_file_from_gdrive(file_id_detection, local_filename_detection)
-download_file_from_gdrive(file_id_segmentation, local_filename_segmentation)
 
 # Extract the zip files
 import zipfile
 with zipfile.ZipFile(local_filename_detection, 'r') as zip_ref:
     zip_ref.extractall("yolovc8x_openvino_model")
-with zipfile.ZipFile(local_filename_segmentation, 'r') as zip_ref:
-    zip_ref.extractall("yolovc8xcdark_openvino_model")
 
 # Load models
 model_dir = "yolovc8x_openvino_model"
-model_seg_dir = "yolov8xcdark_openvino_model"
 
 model = load_openvino_model(Path(model_dir) / "yolovc8x.xml", device)
 # model1 = load_openvino_model(Path(model_seg_dir) / "model.xml", device)
