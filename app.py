@@ -263,40 +263,37 @@ def load_openvino_model(model_dir, device):
 
 device = "CPU"  # Change environment: "GPU", "AUTO", etc.
 
+# Function to download file from Google Drive
+def download_file_from_gdrive(file_id, local_filename):
+    url = f"https://drive.google.com/uc?export=download&id={file_id}"
+    if not os.path.exists(local_filename):
+        gdown.download(url, local_filename, quiet=False)
+    else:
+        print(f"File {local_filename} already exists locally. Skipping download.")
 
-# Google Drive file ID
-file_id = '1hE6iWo6RmrH5i-z7H2yfvzYi8kh8dMlC'
-local_filename = 'yolov8x_openvino_model.zip'
+# Define file IDs and local paths
+file_id_detection = '1hE6iWo6RmrH5i-z7H2yfvzYi8kh8dMlC'
+local_filename_detection = 'yolovc8x_openvino_model.zip'
+# file_id_segmentation = 'your_file_id_for_segmentation_model'  # Replace with actual file ID
+# local_filename_segmentation = 'yolov8xcdark_openvino_model.zip'
 
-download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
+# Download model files
+download_file_from_gdrive(file_id_detection, local_filename_detection)
+download_file_from_gdrive(file_id_segmentation, local_filename_segmentation)
 
-# Check if the file already exists
-if not os.path.exists(local_filename):
-    print(f"File {local_filename} not found locally. Downloading from Google Drive...")
+# Extract the zip files
+import zipfile
+with zipfile.ZipFile(local_filename_detection, 'r') as zip_ref:
+    zip_ref.extractall("yolovc8x_openvino_model")
+with zipfile.ZipFile(local_filename_segmentation, 'r') as zip_ref:
+    zip_ref.extractall("yolovc8xcdark_openvino_model")
 
-    # Download the file
-    with requests.get(download_url, stream=True) as response:
-        if response.status_code == 200:
-            with open(local_filename, 'wb') as file:
-                for chunk in response.iter_content(chunk_size=8192):
-                    file.write(chunk)
-            print(f"Downloaded {local_filename} successfully.")
-        else:
-            print(f"Failed to download file. HTTP Status Code: {response.status_code}")
-else:
-    print(f"File {local_filename} already exists locally. Skipping download.")
+# Load models
+model_dir = "yolovc8x_openvino_model"
+model_seg_dir = "yolov8xcdark_openvino_model"
 
-# Extract ZIP 
-if local_filename.endswith('.zip'):
-    extract_dir = "yolov8x_openvino_model"
-    with zipfile.ZipFile(local_filename, 'r') as zip_ref:
-        zip_ref.extractall(extract_dir)
-        print(f"Extracted {local_filename} into '{extract_dir}' directory.")
-
-det_model_dir = "yolov8x_openvino_model"  # Detection model directory
-
-# Load the detection model
-model = load_openvino_model(Path(det_model_dir) / "yolovc8x.xml", device)
+model = load_openvino_model(Path(model_dir) / "yolovc8x.xml", device)
+# model1 = load_openvino_model(Path(model_seg_dir) / "model.xml", device)
 
 st.write("Models loaded successfully!")
 
