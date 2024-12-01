@@ -27,7 +27,6 @@ import gc
 from pathlib import Path
 import gdown
 import requests
-import os
 import zipfile
 
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
@@ -263,27 +262,6 @@ def load_openvino_model(model_dir, device):
 
 device = "CPU"  # Change environment: "GPU", "AUTO", etc.
 
-
-# Function to download file from Google Drive
-def download_file_from_gdrive(file_id, local_filename):
-    url = f"https://drive.google.com/uc?export=download&id={file_id}"
-    if not os.path.exists(local_filename):
-        gdown.download(url, local_filename, quiet=False)
-    else:
-        print(f"File {local_filename} already exists locally. Skipping download.")
-
-# Update file permissions and get new file ID
-
-file_id_detection = '1hE6iWo6RmrH5i-z7H2yfvzYi8kh8dMlC'  # Replace with the actual updated file ID
-local_filename_detection = 'yolovc8x_openvino_model.zip'
-
-# Download model files
-download_file_from_gdrive(file_id_detection, local_filename_detection)
-
-# Extract the zip files
-import zipfile
-with zipfile.ZipFile(local_filename_detection, 'r') as zip_ref:
-    zip_ref.extractall("yolovc8x_openvino_model")
 
 # Load models
 model_dir = "yolovc8x_openvino_model"
