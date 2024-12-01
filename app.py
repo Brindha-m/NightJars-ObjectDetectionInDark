@@ -264,7 +264,7 @@ device = "CPU"  # Change environment: "GPU", "AUTO", etc.
 
 
 # Load models
-model_dir = "yolovc8x_openvino_model"
+model_dir = "yolovc8x_openvino_model/"
 
 model = load_openvino_model(Path(model_dir), device)
 # model1 = load_openvino_model(Path(model_seg_dir) / "model.xml", device)
