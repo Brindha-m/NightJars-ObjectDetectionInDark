@@ -263,18 +263,20 @@ def load_openvino_model(model_dir, device):
 
 device = "CPU"  # Change environment: "GPU", "AUTO", etc.
 
+
 # Function to download file from Google Drive
-@st.cache_resource
 def download_file_from_gdrive(file_id, local_filename):
-    url = f"https://drive.google.com/drive/folders/uc?export=download&id={file_id}"
+    url = f"https://drive.google.com/uc?export=download&id={file_id}"
     if not os.path.exists(local_filename):
         gdown.download(url, local_filename, quiet=False)
     else:
         print(f"File {local_filename} already exists locally. Skipping download.")
 
-# Define file IDs and local paths
-file_id_detection = '1hE6iWo6RmrH5i-z7H2yfvzYi8kh8dMlC'
+# Update file permissions and get new file ID
+
+file_id_detection = '1hE6iWo6RmrH5i-z7H2yfvzYi8kh8dMlC'  # Replace with the actual updated file ID
 local_filename_detection = 'yolovc8x_openvino_model.zip'
+
 # Download model files
 download_file_from_gdrive(file_id_detection, local_filename_detection)
 
@@ -286,7 +288,7 @@ with zipfile.ZipFile(local_filename_detection, 'r') as zip_ref:
 # Load models
 model_dir = "yolovc8x_openvino_model"
 
-model = load_openvino_model(Path(model_dir) / "yolovc8x.xml", device)
+model = load_openvino_model(Path(model_dir), device)
 # model1 = load_openvino_model(Path(model_seg_dir) / "model.xml", device)
 
 st.write("Models loaded successfully!")
